@@ -1,0 +1,7 @@
+@page "/home"
+@inject UserStateService UserState
+
+@if(UserState.IsLoggedIn)
+{
+    <p>@UserState.CurrentUser.UserID</p>
+}

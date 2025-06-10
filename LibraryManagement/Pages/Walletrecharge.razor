@@ -1,0 +1,66 @@
+@page "/walletrecharge"
+@inject HttpClient Http
+
+<h3>Wallet Recharge</h3>
+
+<div >
+    <label>User ID:</label>
+    <input type="text" @bind="userID"  />
+</div>
+
+<div class="mb-3">
+    <label>Amount:</label>
+    <input type="number" @bind="amount" />
+</div>
+
+<button  @onclick="RechargeAmount">Recharge</button>
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <div >@message</div>
+}
+
+@code {
+    private string userID;
+    private int amount;
+    private string message;
+
+    private async Task RechargeAmount()
+    {
+        message = "";
+        if (string.IsNullOrWhiteSpace(userID))
+        {
+            message = "Please enter a valid User ID.";
+            return;
+        }
+
+        if (amount <= 0)
+        {
+            message = "Please enter a valid recharge amount.";
+            return;
+        }
+
+        try
+        {
+            var response = await Http.PostAsync($"api/borrow/recharge/{userID}/{amount}", null);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadAsStringAsync();
+                message = $"Success: {result}";
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                message = "User not found.";
+            }
+            else
+            {
+                message = "Error while recharging wallet.";
+            }
+        }
+        catch (Exception ex)
+        {
+            message = $"Exception: {ex.Message}";
+        }
+    }
+}

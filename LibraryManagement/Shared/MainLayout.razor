@@ -1,0 +1,33 @@
+﻿@inject NavigationManager Navigation
+
+@inherits LayoutComponentBase
+
+<PageTitle>Online Medical Store</PageTitle>
+
+<div class="main-layout">
+  
+      <nav class="nav-menu">
+    <ul>
+        <li><NavLink href="/home">Home</NavLink></li>
+        <li><NavLink href="/bookdetails">book Details</NavLink></li>
+        <li><NavLink href="/buybook">BuyBook</NavLink></li>
+        <li><NavLink href="/bookhistory">History</NavLink></li>
+        <li><NavLink href="/walletrecharge">WalletRecharge</NavLink></li>
+        <li><a @onclick="Logout">Logout</a></li>
+    </ul>
+</nav>
+
+    
+
+    <div class="body">
+        @Body
+    </div>
+</div>
+
+@code {
+    private void Logout()
+    {
+        @* UserState.CurrentUser = null; *@
+        Navigation.NavigateTo("/");
+    }
+}

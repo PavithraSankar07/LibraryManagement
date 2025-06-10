@@ -1,0 +1,91 @@
+@page "/buybook"
+@inject HttpClient Http
+@using LibraryManagement.Models
+
+<h3>Buy a Book</h3>
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <div >@message</div>
+}
+
+@if (books == null)
+{
+    <p><em>Loading books...</em></p>
+}
+else
+{
+    <table >
+        <thead>
+            <tr>
+                <th>Book ID</th>
+                <th>Book Name</th>
+                <th>Author</th>
+                <th>Availability</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var book in books)
+            {
+                <tr>
+                    <td>@book.BookID</td>
+                    <td>@book.BookName</td>
+                    <td>@book.AuthorName</td>
+                    <td>@book.Availability</td>
+                    <td>
+                        <button  @onclick="() => BorrowBook(book.BookID)">
+                            Buy
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<BookDetails> books;
+    private string message = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadBooks();
+    }
+    private async Task LoadBooks()
+    {
+        books = await Http.GetFromJsonAsync<List<BookDetails>>("api/books");
+    }
+    private async Task BorrowBook(string bookId)
+    {
+        message = "";
+        var borrowRequest = new BorrowDetails
+        {
+            BookID = bookId,
+            UserID = "1"
+        };
+
+        var response = await Http.PostAsJsonAsync("api/borrow/borrow", borrowRequest);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var result = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
+            if (result != null && result.TryGetValue("Message", out var msg))
+            {
+                message = msg;
+            }
+            else
+            {
+                message = "Book bought successfully.";
+            }
+        }
+        else
+        {
+            var error = await response.Content.ReadAsStringAsync();
+           
+            message = error.Trim('"');
+        }
+
+        await LoadBooks(); 
+    }
+}

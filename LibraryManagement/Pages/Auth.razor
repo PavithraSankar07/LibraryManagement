@@ -1,0 +1,83 @@
+@page "/"
+@using LibraryManagement.Models
+@using LibraryManagement.Services
+@inject AuthService AuthService
+
+@inject UserStateService UserState
+@inject NavigationManager NavManager
+
+<h3>@(isSignUp ? "Sign Up" : "Sign In")</h3>
+
+@if (isSignUp)
+{
+    <EditForm Model="newUser" OnValidSubmit="HandleSignUp">
+        <InputText @bind-Value="newUser.UserName" placeholder="Name" />
+        <InputText @bind-Value="newUser.MailID" placeholder="Email" />
+        <InputText @bind-Value="newUser.Password" placeholder="Password" type="password" />
+        <InputText @bind-Value="newUser.Department" placeholder="Department" />
+        <InputNumber @bind-Value="newUser.PhoneNumber" />
+        <InputNumber @bind-Value="newUser.WalletBalance" />
+        <InputSelect @bind-Value="newUser.Gender">
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Others">Others</option>
+        </InputSelect>
+        <button type="submit">Register</button>
+    </EditForm>
+}
+else
+{
+    <EditForm Model="newUser" OnValidSubmit="HandleSignIn">
+        <InputText @bind-Value="loginEmail" placeholder="Email" />
+        <InputText @bind-Value="loginPassword" placeholder="Password" type="password" />
+        <button type="submit">Login</button>
+    </EditForm>
+}
+
+<button @onclick="ToggleMode">
+    @(isSignUp ? "Already have an account? Sign In" : "Don't have an account? Sign Up")
+</button>
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <p>@message</p>
+}
+
+@code {
+    private bool isSignUp = false;
+    private UserDetails newUser = new();
+    private string loginEmail;
+    private string loginPassword;
+    private string message = "";
+
+    private void ToggleMode()
+    {
+        isSignUp = !isSignUp;
+        message = "";
+    }
+
+    private async Task HandleSignUp()
+    {newUser.UserID = null;
+        message = await AuthService.SignUpAsync(newUser);
+        if (message == "Success")
+        {
+            isSignUp = false;
+            message = "Sign up successful. Please log in.";
+        }
+    }
+
+    private async Task HandleSignIn()
+    {
+        var user = await AuthService.SignInAsync(loginEmail, loginPassword);
+        if (user != null)
+        {
+            UserState.SetUser(user); // Store user info for session
+         
+            NavManager.NavigateTo("/home");
+        }
+        else
+        {
+            message = "Invalid email or password.";
+        }
+    }
+}

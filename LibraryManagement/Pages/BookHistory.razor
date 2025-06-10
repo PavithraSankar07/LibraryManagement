@@ -1,0 +1,100 @@
+@page "/bookhistory"
+@using LibraryManagement.Models
+@inject HttpClient Http
+@inject UserStateService UserState
+
+<h3>Book History</h3>
+
+@if (UserState.CurrentUser == null)
+{
+    <p class="text-danger">Please log in to view your borrow history.</p>
+}
+else if (borrowList == null)
+{
+    <p><em>Loading...</em></p>
+}
+else if (borrowList.Count == 0)
+{
+    <p>No borrow history found.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Book ID</th>
+                <th>Borrow ID</th>
+                <th>Borrowed Date</th>
+                <th>Paid Fine Amount</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var book in borrowList)
+            {
+                <tr>
+                    <td>@book.BookID</td>
+                    <td>@book.BorrowID</td>
+                    <td>@book.BorrowedDate.ToShortDateString()</td>
+                    <td>₹@book.PaidFineAmount</td>
+                    <td>@book.BookingStatus</td>
+                    <td>
+                        @if (book.BookingStatus == BookingStatus.Borrowed)
+                        {
+                            <button class="btn btn-warning btn-sm" @onclick="() => ReturnBook(book.BorrowID)">Return</button>
+                        }
+                        else
+                        {
+                            <span class="text-success">Returned</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <div class="alert alert-info mt-3">@message</div>
+}
+
+@code {
+    private List<BorrowDetails> borrowList;
+    private string message;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        if (UserState.CurrentUser != null)
+        {
+            var userId = UserState.CurrentUser.UserID;
+            borrowList = await Http.GetFromJsonAsync<List<BorrowDetails>>($"api/history/{userId}");
+        }
+        else
+        {
+            message = "You must be logged in.";
+        }
+    }
+
+    private async Task ReturnBook(string borrowId)
+{
+    var response = await Http.PostAsync($"api/history/return/{borrowId}", null); // No body
+    if (response.IsSuccessStatusCode)
+    {
+        message = "Book returned successfully.";
+        await LoadData();
+    }
+    else
+    {
+        var error = await response.Content.ReadAsStringAsync();
+        message = $"Failed to return book: {error}";
+    }
+}
+
+}
