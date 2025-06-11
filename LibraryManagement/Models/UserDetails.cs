@@ -8,7 +8,7 @@ namespace LibraryManagement.Models
     public class UserDetails
     {
         
-
+  public int SerialNumber { get; set; }
         public string UserID { get; set; }
         public string UserName { get; set; }
         public long PhoneNumber { get; set; }

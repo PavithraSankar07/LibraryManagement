@@ -12,6 +12,7 @@ namespace API
         // 2.	BookName
         // 3.	AuthorName
         // 4.	Availability (Enum – Unknown, Available, Issued, Damaged)
+           public int SerialNumber { get; set; }
         public string BookID { get; set; }
         public string BookName { get; set; }
         public string AuthorName { get; set; }

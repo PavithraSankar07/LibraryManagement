@@ -14,6 +14,7 @@ namespace API
         // •	BorrowedDate – (Current Date)
         // •	BookingStatus – (Enum - Default, Borrowed, Returned)
         // •	PaidFineAmount
+          public int SerialNumber { get; set; }
         public string? BorrowID { get; set; }
         public string BookID { get; set; }
         public string UserID { get; set; }

@@ -8,6 +8,8 @@ namespace API
     public enum Gender { Male, Female, Others }
     public class UserDetails
     {
+        
+        public int SerialNumber { get; set; }
         public string? UserID { get; set; }
         public string UserName { get; set; }
         public long PhoneNumber { get; set; }

@@ -32,7 +32,7 @@ namespace API
                     Department = "ECE",
                     MailID = "ragu@gmail.com",
                     Password = "123",
-                    WalletBalance = 75,
+                    WalletBalance = 1000,
                 }
 
             };

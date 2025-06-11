@@ -7,7 +7,7 @@ namespace LibraryManagement.Models
 {
     public enum BookingStatus{Default, Borrowed, Returned}
     public class BorrowDetails
-    {
+    {  public int SerialNumber { get; set; }
         //         •	BorrowID (Auto Increment – LB2000)
         // •	BookID 
         // •	UserID

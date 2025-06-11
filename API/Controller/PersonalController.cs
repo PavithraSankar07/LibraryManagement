@@ -27,8 +27,8 @@ namespace API.Controller
                 .DefaultIfEmpty(0)
                 .Max();
 
-            newUser.UserID = $"SF{(maxId + 1):D4}";  // e.g. SF0005
-
+            newUser.UserID = $"SF{(maxId + 1):D4}";
+            newUser.SerialNumber += 1;
             ApplicationDBContext.Users.Add(newUser);
             return Ok(newUser);
         }
@@ -81,13 +81,24 @@ public IActionResult SignIn(string mailid, string password)
         [HttpPost("recharge/{userID}/{amount}")]
         public IActionResult WalletRecharge(string userID, int amount)
         {
+            Console.WriteLine($"Received userID:");
+            Console.WriteLine($"Received userID: '{userID}'");
+            Console.WriteLine($"Received userID: '{amount}'");
+
+
             var user = ApplicationDBContext.Users.FirstOrDefault(user => user.UserID.Equals(userID));
+
+
             if (user == null)
             {
                 return NotFound();
             }
-            user.WalletBalance += amount;
-            return Ok();
+            else
+            {
+                user.WalletBalance += amount;
+            return Ok($"Wallet recharged successfully{user.WalletBalance}");
+            }
+            
         }
 
 

@@ -35,7 +35,7 @@ else
             {
                 <tr>
                     <td>@book.BookID</td>
-                    <td>@book.BorrowID</td>
+                    <td>@book.SerialNumber</td>
                     <td>@book.BorrowedDate.ToShortDateString()</td>
                     <td>₹@book.PaidFineAmount</td>
                     <td>@book.BookingStatus</td>
@@ -105,8 +105,41 @@ else
         showReturnModal = false;
         modalMessage = "";
     }
+   private async Task HandleReturnConfirm(bool isDamaged)
+{
+    // Close modal immediately on confirm click
+    showReturnModal = false;
 
-    private async Task HandleReturnConfirm(bool isDamaged)
+    var jsonContent = new StringContent(
+        $"{{\"isDamaged\":{isDamaged.ToString().ToLower()}}}",
+        System.Text.Encoding.UTF8,
+        "application/json");
+
+    var response = await Http.PostAsync($"api/history/return/{borrowIdToReturn}", jsonContent);
+
+    if (response.IsSuccessStatusCode)
+    {
+        var result = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
+        if (result != null && result.TryGetValue("message", out var msg))
+        {
+            modalMessage = msg;
+        }
+        else
+        {
+            modalMessage = await response.Content.ReadAsStringAsync();
+        }
+    }
+    else
+    {
+        var error = await response.Content.ReadAsStringAsync();
+        modalMessage = $"Failed to return book: {error}";
+    }
+
+    await LoadData();
+}
+
+
+    @* private async Task HandleReturnConfirm(bool isDamaged)
     {
         showReturnModal = false;
 
@@ -123,6 +156,7 @@ else
             if (result != null && result.TryGetValue("message", out var msg))
             {
                 modalMessage = msg;
+                showReturnModal=true;
             }
             else
             {
@@ -137,138 +171,11 @@ else
 
         showReturnModal = true;
         await LoadData();
-    }
+    } *@
 }
 
 
 
 
 
-@* @page "/bookhistory"
-@using LibraryManagement.Models
-@inject HttpClient Http
-@inject UserStateService UserState
 
-<h3>Book History</h3>
-
-@if (UserState.CurrentUser == null)
-{
-    <p>Please log in to view your borrow history.</p>
-}
-else if (borrowList == null)
-{
-    <p><em>Loading...</em></p>
-}
-else if (borrowList.Count == 0)
-{
-    <p>No borrow history found.</p>
-}
-else
-{
-    <table>
-        <thead>
-            <tr>
-                <th>Book ID</th>
-                <th>Borrow ID</th>
-                <th>Borrowed Date</th>
-                <th>Paid Fine Amount</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var book in borrowList)
-            {
-                <tr>
-                    <td>@book.BookID</td>
-                    <td>@book.BorrowID</td>
-                    <td>@book.BorrowedDate.ToShortDateString()</td>
-                    <td>₹@book.PaidFineAmount</td>
-                    <td>@book.BookingStatus</td>
-                    <td>
-                        @if (book.BookingStatus == BookingStatus.Borrowed)
-                        {
-                            <button @onclick="() => ReturnBook(book.BorrowID)">Return</button>
-                        }
-                        else
-                        {
-                            <span>Returned</span>
-                        }
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
-
-@if (!string.IsNullOrEmpty(message))
-{
-    <div>@message</div>
-}
-<CustomDialog Visible="@showBox" Message="@messageDisplay" OnCancel="CancelDialog" OnClose="CloseDialog" />
-
-@code {
-    
-    private bool showBox = false;
- 
-    private string messageDisplay;
-  
-    private Task CloseDialog()
-    {
-        showBox = false;
-        return Task.CompletedTask;
-    }
-    private Task CancelDialog()
-    {
-        showBox = false;
-        return Task.CompletedTask;
-    }
-
-    private List<BorrowDetails> borrowList;
-    private string message;
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadData();
-    }
-
-    private async Task LoadData()
-{
-    if (UserState.CurrentUser != null)
-    {
-        var userId = UserState.CurrentUser.UserID;
-        Console.WriteLine($"User ID: {userId}"); // Debug
-
-        borrowList = await Http.GetFromJsonAsync<List<BorrowDetails>>($"api/history/{userId}");
-
-        Console.WriteLine($"Borrow list count: {borrowList?.Count}"); // Debug
-
-        if (borrowList != null)
-        {
-            foreach (var b in borrowList)
-            {
-                Console.WriteLine($"BookID: {b.BookID}, BorrowID: {b.BorrowID}, Status: {b.BookingStatus}");
-            }
-        }
-    }
-    else
-    {
-        message = "You must be logged in.";
-    }
-}
-
-    private async Task ReturnBook(string borrowId)
-    {
-        var response = await Http.PostAsync($"api/history/return/{borrowId}", null);
-        if (response.IsSuccessStatusCode)
-        {
-            message = "Book returned successfully.";
-            await LoadData();
-        }
-        else
-        {
-            var error = await response.Content.ReadAsStringAsync();
-            message = $"Failed to return book: {error}";
-        }
-    }
-
-} *@

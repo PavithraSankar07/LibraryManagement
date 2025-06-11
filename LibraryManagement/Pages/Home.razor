@@ -4,15 +4,17 @@
 @if (UserState.IsLoggedIn)
 {
 
-    <p> <b> Welcome @UserState.CurrentUser.UserName </b></p>
+    
     @* <h6> Library Management</h6> *@
+<div class="background"></div>
+<div class="content-container">
+    <h2 class="centered-header">Welcome, @UserState.CurrentUser?.UserName!</h2>
 
-<div class="whole">
-    <div class="img2">
-        <img src="css/7a41b7122956961.Y3JvcCw0NTAwLDM1MTksMCw0OTA.jpg">
-    </div>
-    <div class="content">
-        <p>The Connemara Public Library at Egmore in Chennai, Tamil Nadu, India,<br> is one of the four National Depository
+    <div class="main-row">
+        <img src="css/book.jpg" class="left-image" alt="Store Image" />
+        
+        <div class="content-right">
+           <p>The Connemara Public Library at Egmore in Chennai, Tamil Nadu, India,<br> is one of the four National Depository
             Libraries which receive a copy of all books, <br>newspapers and periodicals published in India. Established in
             1890,<br>
             opened for public in 1896 ,the library is a repository of century-old publications,<br> wherein lie some of the
@@ -22,10 +24,14 @@
             Nations. <br> It is located in the Government Museum Complex on Pantheon Road, Egmore,<br> which also houses the
             Government Museum and the National Art Gallery.</p>
         <h4>Knowledge is free at the library, just bring your own container</h4>
-    
-    <div class="img1">
-        <img src="css/book.jpg">
+            <div class="images-row">
+                <img src="css/7a41b7122956961.Y3JvcCw0NTAwLDM1MTksMCw0OTA.jpg" class="circle-image" alt="Circle Image" />
+                <img src="css/book.jpg" class="normal-image" alt="Second Image" />
+            </div>
+        </div>
     </div>
 </div>
-</div>
+
+
+
 }

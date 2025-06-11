@@ -4,34 +4,38 @@
 
 <PageTitle>Online Medical Store</PageTitle>
 
-<div class="main-layout">
-  @if(User.CurrentUser!=null)
+
+
+<PageTitle>BlazorApp</PageTitle>
+
+<div class="page">
+     @if(User.CurrentUser!=null)
   {
-
- 
-      <nav class="nav-menu">
-    <ul>
-        <li><NavLink href="/home">Home</NavLink></li>
-        <li><NavLink href="/bookdetails">book Details</NavLink></li>
-        <li><NavLink href="/buybook">BuyBook</NavLink></li>
-        <li><NavLink href="/bookhistory">History</NavLink></li>
-        <li><NavLink href="/walletrecharge">WalletRecharge</NavLink></li>
-        <li><a @onclick="Logout">Logout</a></li>
-        <li></li>
-    </ul>
-</nav>
-
- }
-
-    <div class="body">
-        @Body
+    <div class="sidebar">
+       
+        <NavMenu />
+        
     </div>
+    }
+
+    <main>
+         @if(User.CurrentUser!=null)
+  {
+        <div class="top-row px-4">
+            <button @onclick="Logout">Logout</button>
+        </div>
+}
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
 </div>
 
 @code {
     private void Logout()
-    {
-        @* UserState.CurrentUser = null; *@
+    {  User.ClearUser();
+        StateHasChanged();    
+        
         Navigation.NavigateTo("/");
     }
 }

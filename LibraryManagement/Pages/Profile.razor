@@ -1,0 +1,19 @@
+@page "/profile"
+@using LibraryManagement.Models
+@inject HttpClient Http
+@inject UserStateService UserState
+
+<div class="main-row">
+
+        <h1>Your Profile</h1> <br>
+        <div class="content-right">
+          <p>Name: @UserState.CurrentUser.UserName</p>
+          <p>MailID: @UserState.CurrentUser.MailID</p>
+          <p>Password: @UserState.CurrentUser.Password</p>
+          <p>PhoneNumber: @UserState.CurrentUser.PhoneNumber</p>
+          <p>WalletBalance: @UserState.CurrentUser.WalletBalance</p>
+            <div class="images-row">
+                
+            </div>
+        </div>
+    </div>

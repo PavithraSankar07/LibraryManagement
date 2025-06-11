@@ -30,12 +30,10 @@ namespace API.Controller
 
             int maxId = ApplicationDBContext.books.Select(b => int.Parse(b.BookID.Replace("BID", ""))).DefaultIfEmpty(1000).Max();
             newBook.BookID = "BID" + (maxId + 1);
-
+            newBook.SerialNumber++;
             ApplicationDBContext.books.Add(newBook);
             return Ok(newBook);
         }
-
-
         // PUT: api/books/{id}
         [HttpPut("{id}")]
         public IActionResult UpdateBook(string id, [FromBody] BookDetails updatedBook)

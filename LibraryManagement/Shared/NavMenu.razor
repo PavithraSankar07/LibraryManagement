@@ -1,34 +1,93 @@
-﻿@* <div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">LibraryManagement</a>
+﻿@inject UserStateService User
+@inject NavigationManager Navigation
+
+@if (User.CurrentUser != null)
+
+{
+    <div class="top-row ps-3 navbar navbar-dark bg-dark">
+    <div class="container-fluid d-flex align-items-center justify-content-between">
+        <a class="navbar-brand" href="">Medical Store</a>
+
+       <div class="user-dropdown position-relative">
+    <div class="dropdown-toggle d-inline-flex align-items-center" @onclick="ToggleDropdown" style="cursor:pointer; user-select:none;" title="@User.CurrentUser.UserName">
+        <span>@User.CurrentUser.UserName</span>
+        @* <span class="ms-1">&#x25BC;</span>  *@
+    </div>
+    @if (isDropdownOpen)
+    {
+        <ul class="dropdown-menu show" style="display: block; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);">
+            <li><a class="dropdown-item" href="#" @onclick="Logout">Logout</a></li>
+            <li><a class="dropdown-item" href="/profile">Profile</a></li>
+        </ul>
+    }
+</div>
+
+
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
     </div>
 </div>
 
-<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
-            </NavLink>
+@* below the medical store show the user name that name should like dropdowm symbol also if user click the username means show the logout method but that name not show should be look like but normal text with dropdowm symbol that it*@
+
+   @* <div class="top-row ps-3 navbar navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="">Medical Store</a>
+
+            <div class="dropdown-blazor" @onclick="ToggleDropdown">
+                <button class="btn btn-secondary dropdown-toggle">
+                    @User.CurrentUser.UserName
+                </button>
+
+                @if (isDropdownOpen)
+                {
+                    <ul class="dropdown-menu show" style="display: block; position: absolute;">
+                        <li><a class="dropdown-item" href="#" @onclick="Logout">Logout</a></li>
+                        <li><a class="dropdown-item" href="/home">Profile</a></li>
+                    </ul>
+                }
+            </div>
+
+            <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
         </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="oi oi-plus" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="fetchdata">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
-            </NavLink>
-        </div>
-    </nav>
-</div>
+    </div> *@
+    <div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
+        <nav class="flex-column">
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="home">
+                    <span class="oi oi-plus" aria-hidden="true"></span> Home
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="bookdetails">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Book Details
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="buybook">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Buy Book
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="bookhistory">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Book History
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="walletrecharge">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Wallet Recharge
+                </NavLink>
+            </div>
+        </nav>
+    </div>
+}
 
 @code {
     private bool collapseNavMenu = true;
+    private bool isDropdownOpen = false;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
@@ -36,4 +95,16 @@
     {
         collapseNavMenu = !collapseNavMenu;
     }
-} *@
+
+    private void ToggleDropdown()
+    {
+        isDropdownOpen = !isDropdownOpen;
+    }
+
+    private void Logout()
+    {
+        User.ClearUser();
+        isDropdownOpen = false;
+        Navigation.NavigateTo("/");
+    }
+}

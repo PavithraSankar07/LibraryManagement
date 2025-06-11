@@ -2,28 +2,29 @@
 @inject HttpClient Http
 @using LibraryManagement.Models
 @inject UserStateService UserState
+<div class="whole">
+   
 <h3>Wallet Recharge</h3>
-
-
-
 <div class="mb-3">
     <label>Amount:</label>
     <input type="number" @bind="amount" />
 </div>
-
 <button @onclick="RechargeAmount">Recharge</button>
+</div>
+
+
 
 <CustomDialog_copy
     Message="@modalMessage" 
     IsVisible="@isModalVisible" 
     ShowConfirmButtons="false" 
     OnClose="CloseModal" />
-
 @code {
-    @* private string userID; *@
+    @* private string userID;*@
     private int amount;
     private string modalMessage;
     private bool isModalVisible;
+
 
     private async Task RechargeAmount()
     {
@@ -41,11 +42,13 @@
 
         try
         {
-            var response = await Http.PostAsync($"api/borrow/recharge/{UserState.CurrentUser.UserID}/{amount}", null);
+            Console.WriteLine(UserState.CurrentUser.UserID);
+            var response = await Http.PostAsync($"api/personal/recharge/{UserState.CurrentUser.UserID}/{amount}", null);
 
             if (response.IsSuccessStatusCode)
             {
-                modalMessage = "Wallet recharged successfully.";
+                @* StateHasChanged(); *@
+                modalMessage = $"Wallet recharged successfully {amount}.Your total amount {UserState.CurrentUser.WalletBalance}";
             }
             else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
@@ -75,4 +78,5 @@
         isModalVisible = false;
         return Task.CompletedTask;
     }
-}
+} 
+

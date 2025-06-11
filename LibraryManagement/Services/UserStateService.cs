@@ -8,7 +8,7 @@ namespace LibraryManagement
 {
     public class UserStateService
     {
-        public UserDetails? CurrentUser { get; private set; }
+        public UserDetails? CurrentUser { get; set; }
 
         public void SetUser(UserDetails user) => CurrentUser = user;
 

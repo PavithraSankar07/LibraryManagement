@@ -7,7 +7,7 @@ namespace LibraryManagement.Models
 {
     public enum Availability {Unknown, Available, Issued, Damaged}
     public class BookDetails
-    {
+    {  public int SerialNumber { get; set; }
         //         1.	BookID (Auto Increment - BID1000)
         // 2.	BookName
         // 3.	AuthorName

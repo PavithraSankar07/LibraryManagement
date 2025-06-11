@@ -1,9 +1,10 @@
 .book-table
 {
-    border-collapse: collapse;
-    margin-left: 25%;
-    margin-top: 7rem;
-    width: 50%;
+     width: 100%;
+  border-collapse: collapse;
+   border: 1px solid #dddddd;
+  margin-top: 1rem;
+ 
 
 }
 .book-table th,
@@ -18,9 +19,14 @@
 }
 .book-table button
 {
-    padding: 10px;
-    background-color: hsl(240, 38%, 67%);
-    border: none;
+     background-color: #3a0647 ;
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 .addbutton
 {
@@ -51,7 +57,7 @@
     /* width: 100%; */
     border-collapse: collapse;
     font-family: Arial, sans-serif;
-    margin-top: 10px;
+    /* margin-top: 10%; */
 }
 
 .book-table th,
@@ -62,37 +68,28 @@
 }
 
 .book-table th {
-    background-color: lab(71.47% -7.21 -44.14);
+    background-color: rgb(5, 39, 103);
     font-weight: bold;
+    color: white;
 }
 
 .book-table tr:nth-child(even) {
-    background-color: #ebe6e6;
+    background-color: #f3f6fb;
 }
 
 .book-table tr:hover {
-    background-color: #f1f1f1;
+    background-color: #e1eaff;
 }
 
-/* Action Buttons */
-.book-table button {
-    background-color: #008CBA;
-    color: white;
-    padding: 6px 12px;
-    margin-right: 5px;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.2s ease;
+button:hover {
+  background-color: hsl(288, 89%, 37%) ;
 }
 
-.book-table button:hover {
-    background-color: #006f9a;
-}
+
+
 
 .book-table button:last-child {
-    background-color: #f44336;
+    background-color: rgb(5, 39, 103);
 }
 
 .book-table button:last-child:hover {

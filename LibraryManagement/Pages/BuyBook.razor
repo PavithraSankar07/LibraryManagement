@@ -1,4 +1,148 @@
-    @page "/buybook"
+   @page "/buybook"
+@inject HttpClient Http
+@using LibraryManagement.Models
+@using Services
+@inject UserStateService UserState
+
+<h3>Buy a Book</h3>
+
+@if (books == null)
+{
+    <p><em>Loading books...</em></p>
+}
+else
+{
+    <table class="book-table">
+        <thead>
+            <tr>
+                <th>Book ID</th>
+                <th>Book Name</th>
+                <th>Author</th>
+                <th>Availability</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var book in books)
+            {
+                <tr>
+                    <td>@book.SerialNumber</td>
+                    <td>@book.BookName</td>
+                    <td>@book.AuthorName</td>
+                    <td>@book.Availability</td>
+                    <td>
+                        <button @onclick="() => OnBuyClick(book.BookID)">
+                            Buy
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<CustomDialog_copy Message="@modalMessage" 
+            IsVisible="@showModal" 
+            OnCancel="OnModalCancel" 
+            OnConfirm="OnModalConfirm" 
+            OnClose="OnModalClose" 
+            ShowConfirmButtons="@showConfirmButtons" />
+
+@code {
+    private List<BookDetails> books;
+    private string modalMessage = "";
+    private bool showModal = false;
+    private string bookIdToBuy;
+    private bool showConfirmButtons = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadBooks();
+    }
+
+    private async Task LoadBooks()
+    {
+        books = await Http.GetFromJsonAsync<List<BookDetails>>("api/books");
+    }
+
+    private void OnBuyClick(string bookId)
+    {
+        bookIdToBuy = bookId;
+        var book = books.FirstOrDefault(b => b.BookID == bookId);
+
+        if (book == null)
+        {
+            modalMessage = "Book not found.";
+            showConfirmButtons = false;
+            showModal = true;
+            return;
+        }
+
+        if (book.Availability == Availability.Issued)
+        {
+            modalMessage = "This book is already issued and cannot be bought.";
+            showConfirmButtons = false;
+            showModal = true;
+            return;
+        }
+
+        if (book.Availability == Availability.Damaged)
+        {
+            modalMessage = "This book is damaged and cannot be bought.";
+            showConfirmButtons = false;
+            showModal = true;
+            return;
+        }
+
+        modalMessage = "Do you want to buy this book?";
+        showConfirmButtons = true;
+        showModal = true;
+    }
+
+    private void OnModalCancel()
+    {
+        showModal = false;
+        modalMessage = "";
+    }
+
+    private async Task OnModalConfirm()
+    {
+        var borrowRequest = new BorrowDetails
+        {
+            BookID = bookIdToBuy,
+            UserID = UserState.CurrentUser.UserID
+        };
+
+        var response = await Http.PostAsJsonAsync("api/borrow/borrow", borrowRequest);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var result = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
+            modalMessage = result != null && result.TryGetValue("Message", out var msg) ? msg : "Book bought successfully.";
+        }
+        else
+        {
+            var error = await response.Content.ReadAsStringAsync();
+            modalMessage = $"Error: {error}";
+        }
+
+        showConfirmButtons = false;
+        showModal = true;
+
+        await LoadBooks();
+    }
+
+    private void OnModalClose()
+    {
+        showModal = false;
+        modalMessage = "";
+    }
+}
+
+   
+   
+   @* ------------------------------------------------- *@
+    @* @page "/buybook"
     @inject HttpClient Http
     @using LibraryManagement.Models
 
@@ -66,7 +210,7 @@
         {
             bookIdToBuy = bookId;
             modalMessage = "";
-            showConfirmButtons = false;  // hide confirm buttons by default
+            showConfirmButtons = false;  
 
             var borrowRequest = new BorrowDetails
             {
@@ -74,19 +218,19 @@
                 UserID = "1"
             };
 
-            // Call the API immediately to check
+            
             var response = await Http.PostAsJsonAsync("api/borrow/borrow", borrowRequest);
 
             if (response.IsSuccessStatusCode)
             {
-                // Book is available, ask user to confirm purchase
+            
                 modalMessage = "Book is available. Do you want to buy this book?";
                 showConfirmButtons = true;
                 showModal = true;
             }
             else
             {
-                // Some error, read error message and show modal with only OK
+              
                 var errorMessage = await response.Content.ReadAsStringAsync();
                 modalMessage = errorMessage;
                 showConfirmButtons = false;
@@ -136,9 +280,9 @@
             showModal = false;
             modalMessage = "";
         }
-    }
+    } *@
 
-
+@* ------------------------------------------------- *@
 
 @* @page "/buybook"
 @inject HttpClient Http

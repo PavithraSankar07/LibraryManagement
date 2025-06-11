@@ -32,8 +32,8 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Save</button>
-                    <button type="button" class="btn btn-secondary" @onclick="Close">Cancel</button>
+                    <button type="submit" class="btn1">Save</button>
+                    <button type="button" class="btn2" @onclick="Close">Cancel</button>
                 </div>
             </EditForm>
         </div>
@@ -74,6 +74,28 @@
     }
 }
 <style>
+    .btn1
+{
+     background-color: rgb(5, 39, 103);;
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+  .btn2
+{
+     background-color: rgb(5, 39, 103);;
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
 .modal-overlay {
     position: fixed;
     top: 0; left: 0;
@@ -86,8 +108,11 @@
 }
 
 .modal-content {
-    background: white;
+  background-color: #3a0647 ;
+   background-color: rgb(5, 39, 103);
+    background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
     padding: 20px;
+    color: white;
     border-radius: 6px;
     width: 400px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);

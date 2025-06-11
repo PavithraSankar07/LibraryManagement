@@ -10,7 +10,7 @@
 <table class="book-table">
     <thead>
         <tr>
-            <th>Book ID</th>
+            <th>S.NO</th>
             <th>Name</th>
             <th>Author</th>
             <th>Availability</th>
@@ -21,7 +21,7 @@
         @foreach (var book in books)
         {
             <tr>
-                <td>@book.BookID</td>
+                <td>@book.SerialNumber</td>
                 <td>@book.BookName</td>
                 <td>@book.AuthorName</td>
                 <td>@book.Availability</td>
@@ -62,23 +62,30 @@
     </EditForm>
 } *@
 <BookFormModal Show="@ShowModal" ShowChanged="@(val => ShowModal = val)" Book="@currentBook" OnValidSubmit="HandleBookSubmit" />
-
+<CustomDialog_copy
+    Message="@message" 
+    IsVisible="@visible" 
+    ShowConfirmButtons="false" 
+    OnClose="CloseModal" />
 @* @if (!string.IsNullOrEmpty(message))
 {
     <p>@message</p>
 } *@
 @code {
+     private Task CloseModal()
+    {
+        visible = false;
+        return Task.CompletedTask;
+    }
 private bool ShowModal = false;
 private bool isEditMode = false;
+private bool visible=false;
 private string message = "";
-
-
-
-
-
-
-
-
+private void ShowModal1(string msg)
+    {
+        message = msg;
+        visible = true;
+    }
     @* --------------------- *@
     private List<BookDetails> books = new();
     private BookDetails currentBook = new();
@@ -92,8 +99,8 @@ private string message = "";
     private async Task LoadBooks()
     {
         books = await Http.GetFromJsonAsync<List<BookDetails>>("api/books");
+            StateHasChanged();
     }
-
     private void ShowAddForm()
     {
         currentBook = new BookDetails();
@@ -124,7 +131,10 @@ private async Task DeleteBook(string id)
     {
         await Http.DeleteAsync($"api/books/{id}");
         await LoadBooks();
-        message = "Deleted successfully.";
+ShowModal1("Deleted successfully.");
+        @* message = "Deleted successfully.";
+        visible=true; *@
+
     }
 }
 private async Task HandleBookSubmit(BookDetails book)
@@ -152,55 +162,7 @@ private async Task HandleBookSubmit(BookDetails book)
 
     ShowModal = false;
 }
-    @* private async Task DeleteBook(string id)
-    {
-        var confirmed = await JS.InvokeAsync<bool>("confirm", $"Delete book {id}?");
-        if (!confirmed)
-            return;
 
-        var response = await Http.DeleteAsync($"api/books/{id}");
-        if (response.IsSuccessStatusCode)
-        {
-            message = "Deleted successfully.";
-            await LoadBooks();
-        }
-        else
-        {
-            message = "Delete failed.";
-        }
-    } *@
-
-    @* private async Task HandleValidSubmit()
-    {Console.WriteLine($"Submitting book: {currentBook.BookName}, {currentBook.AuthorName}, {currentBook.Availability}");
-        if (isEditMode)
-        {
-            HttpResponseMessage response = await Http.PutAsJsonAsync($"api/books/{currentBook.BookID}", currentBook);
-            if (response.IsSuccessStatusCode)
-            {
-                message = "Updated successfully.";
-                isFormVisible = false;
-                await LoadBooks();
-            }
-            else
-            {
-                message = "Update failed.";
-            }
-        }
-        else
-        {
-            var response = await Http.PostAsJsonAsync("api/books", currentBook);
-            if (response.IsSuccessStatusCode)
-            {
-                message = "Added successfully.";
-                isFormVisible = false;
-                await LoadBooks();
-            }
-            else
-            {
-                message = "Add failed.";
-            }
-        }
-    } *@
 
     private void CancelForm()
     {
