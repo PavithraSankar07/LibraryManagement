@@ -1,0 +1,122 @@
+@using LibraryManagement.Models
+
+@if (Show)
+{
+    <div class="modal-overlay" @onclick="Close">
+        <div class="modal-content" @onclick:stopPropagation>
+            <EditForm Model="bookModel" OnValidSubmit="Submit">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="modal-header">
+                    <h4>@(bookModel.BookID == null ? "Add Book" : "Edit Book")</h4>
+                    <button class="close-button" @onclick="Close">×</button>
+                </div>
+
+                <div class="modal-body">
+                    <label>Book Name</label>
+                    <InputText @bind-Value="bookModel.BookName" class="form-control" />
+                    <ValidationMessage For="@(() => bookModel.BookName)" />
+
+                    <label>Author Name</label>
+                    <InputText @bind-Value="bookModel.AuthorName" class="form-control" />
+                    <ValidationMessage For="@(() => bookModel.AuthorName)" />
+
+                    <label>Availability</label>
+                    <select @bind="bookModel.Availability" class="form-control">
+                        @foreach (var avail in Enum.GetValues(typeof(Availability)).Cast<Availability>())
+                        {
+                            <option value="@avail">@avail</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-secondary" @onclick="Close">Cancel</button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public BookDetails Book { get; set; }
+    [Parameter] public bool Show { get; set; }
+    [Parameter] public EventCallback<bool> ShowChanged { get; set; }
+    [Parameter] public EventCallback<BookDetails> OnValidSubmit { get; set; }
+
+    private BookDetails bookModel = new();
+
+    protected override void OnParametersSet()
+    {
+        if (Show && Book != null)
+        {
+            bookModel = new BookDetails
+            {
+                BookID = Book.BookID,
+                BookName = Book.BookName,
+                AuthorName = Book.AuthorName,
+                Availability = Book.Availability
+            };
+        }
+    }
+
+    private async Task Submit()
+    {
+        await OnValidSubmit.InvokeAsync(bookModel);
+        await ShowChanged.InvokeAsync(false);
+    }
+
+    private async Task Close()
+    {
+        await ShowChanged.InvokeAsync(false);
+    }
+}
+<style>
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 6px;
+    width: 400px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.close-button {
+    font-size: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.modal-body {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.modal-footer {
+    margin-top: 15px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+</style>

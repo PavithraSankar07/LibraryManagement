@@ -1,0 +1,95 @@
+.book-table
+{
+    border-collapse: collapse;
+    margin-left: 25%;
+    /* margin-top: 10rem; */
+    width: 50%;
+
+}
+.book-table th,
+.book-table td
+{
+    border: 1px solid black;
+    padding: 10px;
+}
+.book-table th
+{
+    background-color: #3d97e5;
+}
+.book-table button
+{
+    padding: 10px;
+    background-color: hsl(240, 38%, 67%);
+    border: none;
+}
+.addbutton
+{
+      background-color: blue;
+      border: none;
+}
+/* Button Styles */
+.addbutton {
+    background-color: #4CAF50;
+    color: white;
+     margin-top: 7rem;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    /* margin-bottom: 15px; */
+    margin-left: 45%;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.addbutton:hover {
+    background-color: #45a049;
+}
+
+/* Table Styles */
+.book-table {
+    /* width: 100%; */
+    border-collapse: collapse;
+    font-family: Arial, sans-serif;
+    margin-top: 10%;
+}
+
+.book-table th,
+.book-table td {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 12px;
+}
+
+.book-table th {
+    background-color: lab(71.47% -7.21 -44.14);
+    font-weight: bold;
+}
+
+.book-table tr:nth-child(even) {
+    background-color: #ebe6e6;
+}
+
+.book-table tr:hover {
+    background-color: #f1f1f1;
+}
+.book-table button {
+  
+    color: white;
+    padding: 6px 12px;
+    margin-right: 5px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+}
+
+
+.book-table button:last-child {
+    background-color: #f44336;
+}
+
+.book-table button:last-child:hover {
+    background-color: #d32f2f;
+}

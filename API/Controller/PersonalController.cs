@@ -81,7 +81,7 @@ public IActionResult SignIn(string mailid, string password)
         [HttpPost("recharge/{userID}/{amount}")]
         public IActionResult WalletRecharge(string userID, int amount)
         {
-            var user = ApplicationDBContext.Users.Find(user => user.UserID.Equals(userID));
+            var user = ApplicationDBContext.Users.FirstOrDefault(user => user.UserID.Equals(userID));
             if (user == null)
             {
                 return NotFound();

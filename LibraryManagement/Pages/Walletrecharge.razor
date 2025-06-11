@@ -1,66 +1,78 @@
 @page "/walletrecharge"
 @inject HttpClient Http
-
+@using LibraryManagement.Models
+@inject UserStateService UserState
 <h3>Wallet Recharge</h3>
 
-<div >
-    <label>User ID:</label>
-    <input type="text" @bind="userID"  />
-</div>
+
 
 <div class="mb-3">
     <label>Amount:</label>
     <input type="number" @bind="amount" />
 </div>
 
-<button  @onclick="RechargeAmount">Recharge</button>
+<button @onclick="RechargeAmount">Recharge</button>
 
-@if (!string.IsNullOrEmpty(message))
-{
-    <div >@message</div>
-}
+<CustomDialog_copy
+    Message="@modalMessage" 
+    IsVisible="@isModalVisible" 
+    ShowConfirmButtons="false" 
+    OnClose="CloseModal" />
 
 @code {
-    private string userID;
+    @* private string userID; *@
     private int amount;
-    private string message;
+    private string modalMessage;
+    private bool isModalVisible;
 
     private async Task RechargeAmount()
     {
-        message = "";
-        if (string.IsNullOrWhiteSpace(userID))
+        if (string.IsNullOrWhiteSpace(UserState.CurrentUser.UserID))
         {
-            message = "Please enter a valid User ID.";
+            ShowModal("Please enter a valid User ID.");
             return;
         }
 
         if (amount <= 0)
         {
-            message = "Please enter a valid recharge amount.";
+            ShowModal("Please enter a valid recharge amount.");
             return;
         }
 
         try
         {
-            var response = await Http.PostAsync($"api/borrow/recharge/{userID}/{amount}", null);
+            var response = await Http.PostAsync($"api/borrow/recharge/{UserState.CurrentUser.UserID}/{amount}", null);
 
             if (response.IsSuccessStatusCode)
             {
-                var result = await response.Content.ReadAsStringAsync();
-                message = $"Success: {result}";
+                modalMessage = "Wallet recharged successfully.";
             }
             else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
-                message = "User not found.";
+                modalMessage = "User not found.";
             }
             else
             {
-                message = "Error while recharging wallet.";
+                modalMessage = "Error while recharging wallet.";
             }
+
+            isModalVisible = true;
         }
         catch (Exception ex)
         {
-            message = $"Exception: {ex.Message}";
+            ShowModal($"Exception: {ex.Message}");
         }
+    }
+
+    private void ShowModal(string message)
+    {
+        modalMessage = message;
+        isModalVisible = true;
+    }
+
+    private Task CloseModal()
+    {
+        isModalVisible = false;
+        return Task.CompletedTask;
     }
 }

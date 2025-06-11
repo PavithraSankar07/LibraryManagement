@@ -1,0 +1,31 @@
+
+.img1 img
+{
+    width: 30%;
+    border-radius: 50%;
+    margin-left: 25%;
+
+}
+.img2 img
+{
+    /* width: 99%; */
+    height: 75%;
+    
+    justify-content: center;
+}
+.whole
+{
+    gap: 25px;
+    display: flex;
+    margin-top: 15%;
+}
+.content p
+{
+    margin-left: 25%;
+}
+.content h4
+{
+    font-weight: bold;
+    color: #3a2be2;
+    margin-left: 25%;
+}

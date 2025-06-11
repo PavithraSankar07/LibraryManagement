@@ -1,0 +1,142 @@
+@if (IsVisible)
+{
+    <div class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h4>Return Book</h4>
+                <button class="close-btn" @onclick="OnCloseClicked">X</button>
+            </div>
+            <div class="modal-body">
+                <p>@Message</p>
+                <p>Is the book damaged?</p>
+                <div class="damage-options">
+                    <button class="@GetButtonClass(true)" @onclick="() => SelectDamaged(true)">Yes</button>
+                    <button class="@GetButtonClass(false)" @onclick="() => SelectDamaged(false)">No</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="cancel-btn" @onclick="OnCancelClicked">Cancel</button>
+                <button class="confirm-btn" @onclick="OnConfirmClicked" disabled="@(selectedDamaged == null)">Confirm</button>
+            </div>
+        </div>
+    </div>
+}
+
+<style>
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+.modal-box {
+    background: white;
+    border-radius: 8px;
+    width: 350px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+.modal-body p {
+    margin: 10px 0;
+}
+.damage-options {
+    display: flex;
+    gap: 10px;
+    margin-top: 5px;
+}
+.damage-options button {
+    flex: 1;
+    padding: 8px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    font-weight: 600;
+}
+.damage-options button.selected {
+    background-color: #007bff;
+    color: white;
+    border-color: #0056b3;
+}
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 15px;
+}
+.cancel-btn, .confirm-btn {
+    padding: 6px 15px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+}
+.cancel-btn {
+    background-color: #dc3545;
+    color: white;
+}
+.confirm-btn {
+    background-color: #28a745;
+    color: white;
+}
+.confirm-btn:disabled {
+    background-color: #94d3a2;
+    cursor: not-allowed;
+}
+</style>
+
+@code {
+    [Parameter] public bool IsVisible { get; set; }
+    [Parameter] public string Message { get; set; } = "Please confirm the return.";
+    [Parameter] public EventCallback OnCancel { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
+    [Parameter] public EventCallback<bool> OnConfirm { get; set; } // returns damaged true/false
+
+    private bool? selectedDamaged = null;
+
+    private void SelectDamaged(bool damaged)
+    {
+        selectedDamaged = damaged;
+    }
+
+    private async Task OnConfirmClicked()
+    {
+        if (selectedDamaged.HasValue)
+        {
+            await OnConfirm.InvokeAsync(selectedDamaged.Value);
+            selectedDamaged = null;
+        }
+    }
+
+    private async Task OnCancelClicked()
+    {
+        selectedDamaged = null;
+        await OnCancel.InvokeAsync();
+    }
+
+    private async Task OnCloseClicked()
+    {
+        selectedDamaged = null;
+        await OnClose.InvokeAsync();
+    }
+
+    private string GetButtonClass(bool value)
+    {
+        return selectedDamaged == value ? "selected" : "";
+    }
+}

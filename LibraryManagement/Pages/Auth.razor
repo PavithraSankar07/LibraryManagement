@@ -2,6 +2,122 @@
 @using LibraryManagement.Models
 @using LibraryManagement.Services
 @inject AuthService AuthService
+@inject UserStateService UserState
+@inject NavigationManager NavManager
+
+<div class="whole-div">
+    <button @onclick="ShowLogin">Login</button>
+    <button @onclick="ShowSignUp">Sign Up</button>
+</div>
+
+@if (showLogin)
+{
+    <EditForm  Model="newUser" OnValidSubmit="HandleSignIn">
+        <div class="login" id="full-form">
+            <h2>Login</h2>
+            <InputText @bind-Value="loginEmail" placeholder="Email" />
+            <InputText @bind-Value="loginPassword" type="password" placeholder="Password" />
+            <button type="submit">Login</button>
+        </div>
+    </EditForm>
+}
+else
+{
+    <EditForm Model="newUser" OnValidSubmit="HandleSignUp">
+        <div class="signup" id="full-form">
+            <h2>Sign Up</h2>
+            <InputText @bind-Value="newUser.UserName" placeholder="Name" />
+            <InputText @bind-Value="newUser.MailID" placeholder="Email" />
+            <InputText @bind-Value="newUser.Password" placeholder="Password" type="password" />
+            <InputText @bind-Value="newUser.Department" placeholder="Department" />
+            <InputNumber @bind-Value="newUser.PhoneNumber" />
+            <InputNumber @bind-Value="newUser.WalletBalance" />
+            <InputSelect @bind-Value="newUser.Gender">
+                <option value="">Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Others">Others</option>
+            </InputSelect>
+            <button type="submit">Register</button>
+        </div>
+    </EditForm>
+}
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <p>@message</p>
+}
+
+@code {
+    private bool showLogin = true;
+    private UserDetails newUser = new();
+    private string loginEmail;
+    private string loginPassword;
+    private string message = "";
+
+    private void ShowLogin()
+    {
+        showLogin = true;
+        message = "";
+        loginEmail = "";
+        loginPassword = "";
+    }
+
+    private void ShowSignUp()
+    {
+        showLogin = false;
+        message = "";
+        newUser = new UserDetails();
+    }
+
+    private async Task HandleSignUp()
+    {
+        newUser.UserID = null;
+        message = await AuthService.SignUpAsync(newUser);
+        if (message == "Success")
+        {
+            showLogin = true;
+            message = "Sign up successful. Please log in.";
+        }
+    }
+
+    private async Task HandleSignIn()
+    {
+        var user = await AuthService.SignInAsync(loginEmail, loginPassword);
+        if (user != null)
+        {
+            UserState.SetUser(user);
+            NavManager.NavigateTo("/home");
+        }
+        else
+        {
+            message = "Invalid email or password.";
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@* @page "/"
+@using LibraryManagement.Models
+@using LibraryManagement.Services
+@inject AuthService AuthService
 
 @inject UserStateService UserState
 @inject NavigationManager NavManager
@@ -80,4 +196,4 @@ else
             message = "Invalid email or password.";
         }
     }
-}
+} *@

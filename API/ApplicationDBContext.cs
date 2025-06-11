@@ -13,7 +13,7 @@ namespace API
 
                 new UserDetails
                 {
-                    UserID = "1",
+                    UserID = "SF0001",
                     UserName = "Pavi",
                     PhoneNumber = 9876543210,
                     Gender = Gender.Female,
@@ -25,7 +25,7 @@ namespace API
                 },
                 new UserDetails
                 {
-                    UserID = "2",
+                    UserID = "SF0002",
                     UserName = "ragu",
                     PhoneNumber = 9123456789,
                     Gender = Gender.Male,
@@ -36,16 +36,19 @@ namespace API
                 }
 
             };
-
         public static List<BookDetails> books = new List<BookDetails>()
         {
             new BookDetails { BookID = "BID1001", BookName = "Star", AuthorName = "Pavi", Availability = Availability.Available },
-            new BookDetails { BookID = "BID1002", BookName = "1984", AuthorName = "Ragu", Availability = Availability.Issued },
-            new BookDetails { BookID = "BID1003", BookName = "EI", AuthorName = "Suba", Availability = Availability.Available }
+            new BookDetails { BookID = "BID1002", BookName = "1984", AuthorName = "Lavi", Availability = Availability.Issued },
+            new BookDetails { BookID = "BID1003", BookName = "EI", AuthorName = "Sugi", Availability = Availability.Available },
+             new BookDetails { BookID = "BID1004", BookName = "Goodway", AuthorName = "Baskar", Availability = Availability.Available },
+            new BookDetails { BookID = "BID1005", BookName = "Attitude", AuthorName = "Pooja", Availability = Availability.Issued },
+            new BookDetails { BookID = "BID1006", BookName = "Goal", AuthorName = "Ravi", Availability = Availability.Available }
         };
         public static List<BorrowDetails> borrowList = new List<BorrowDetails>()
         {
-            new BorrowDetails{BorrowID = "LB2000", BookID="BID1002", BorrowedDate = DateTime.Parse("11/11/1111"), BookingStatus=BookingStatus.Borrowed, PaidFineAmount=0, UserID="2"}
+            new BorrowDetails{BorrowID = "LB2000", BookID="BID1002", BorrowedDate = DateTime.Parse("11/11/1111"), BookingStatus=BookingStatus.Borrowed, PaidFineAmount=0, UserID="SF0002"},
+            new BorrowDetails{BorrowID = "LB2001", BookID="BID1003", BorrowedDate = DateTime.Parse("11/11/1111"), BookingStatus=BookingStatus.Borrowed, PaidFineAmount=0, UserID="SF0002"},
         };
     }
 }

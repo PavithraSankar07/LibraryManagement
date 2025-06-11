@@ -3,11 +3,11 @@
 
 @inject HttpClient Http
 
-<h3>Book Details</h3>
 
-<button @onclick="ShowAddForm">Add Book</button>
 
-<table class="table">
+<button class="addbutton" @onclick="ShowAddForm">Add Book</button>
+
+<table class="book-table">
     <thead>
         <tr>
             <th>Book ID</th>
@@ -34,12 +34,11 @@
     </tbody>
 </table>
 
-@if (isFormVisible)
+@* @if (isFormVisible)
 {
     <EditForm Model="currentBook" OnValidSubmit="HandleValidSubmit">
         <DataAnnotationsValidator />
         <ValidationSummary />
-
         <div>
             <label>Name:</label>
             <InputText @bind-Value="currentBook.BookName" />
@@ -53,7 +52,7 @@
             <select @bind="currentBook.Availability">
     @foreach (var avail in Enum.GetValues(typeof(Availability)).Cast<Availability>())
     {
-        <option value="@avail.ToString()">@avail</option>
+        <option value="@((int)avail)">@avail</option>
     }
 </select>
 
@@ -61,23 +60,35 @@
         <button type="submit">@((isEditMode) ? "Update" : "Add")</button>
         <button type="button" @onclick="CancelForm">Cancel</button>
     </EditForm>
-}
+} *@
+<BookFormModal Show="@ShowModal" ShowChanged="@(val => ShowModal = val)" Book="@currentBook" OnValidSubmit="HandleBookSubmit" />
 
-@if (!string.IsNullOrEmpty(message))
+@* @if (!string.IsNullOrEmpty(message))
 {
     <p>@message</p>
-}
+} *@
 @code {
+private bool ShowModal = false;
+private bool isEditMode = false;
+private string message = "";
+
+
+
+
+
+
+
+
+    @* --------------------- *@
     private List<BookDetails> books = new();
     private BookDetails currentBook = new();
     private bool isFormVisible = false;
-    private bool isEditMode = false;
-    private string message = "".ToString();
+    @* private bool isEditMode = false; *@
+    @* private string message = "".ToString(); *@
     protected override async Task OnInitializedAsync()
     {
         await LoadBooks();
     }
-
     private async Task LoadBooks()
     {
         books = await Http.GetFromJsonAsync<List<BookDetails>>("api/books");
@@ -86,9 +97,10 @@
     private void ShowAddForm()
     {
         currentBook = new BookDetails();
-        isFormVisible = true;
+        @* isFormVisible = true; *@
         isEditMode = false;
-        message = "".ToString();
+        ShowModal=true;
+        @* message = "".ToString(); *@
     }
 
     private void EditBook(BookDetails book)
@@ -100,12 +112,47 @@
             AuthorName = book.AuthorName,
             Availability = book.Availability
         };
-        isFormVisible = true;
+        @* isFormVisible = true; *@
         isEditMode = true;
-        message = "".ToString();
+        ShowModal = true;
+        @* message = "".ToString(); *@
+    }
+private async Task DeleteBook(string id)
+{
+    var book = books.FirstOrDefault(b => b.BookID == id);
+    if (book != null)
+    {
+        await Http.DeleteAsync($"api/books/{id}");
+        await LoadBooks();
+        message = "Deleted successfully.";
+    }
+}
+private async Task HandleBookSubmit(BookDetails book)
+{
+    HttpResponseMessage response;
+
+    if (isEditMode)
+    {
+        response = await Http.PutAsJsonAsync($"api/books/{book.BookID}", book);
+    }
+    else
+    {
+        response = await Http.PostAsJsonAsync("api/books", book);
     }
 
-    private async Task DeleteBook(string id)
+    if (response.IsSuccessStatusCode)
+    {
+        message = isEditMode ? "Book updated." : "Book added.";
+        await LoadBooks();
+    }
+    else
+    {
+        message = "Operation failed.";
+    }
+
+    ShowModal = false;
+}
+    @* private async Task DeleteBook(string id)
     {
         var confirmed = await JS.InvokeAsync<bool>("confirm", $"Delete book {id}?");
         if (!confirmed)
@@ -121,13 +168,13 @@
         {
             message = "Delete failed.";
         }
-    }
+    } *@
 
-    private async Task HandleValidSubmit()
-    {
+    @* private async Task HandleValidSubmit()
+    {Console.WriteLine($"Submitting book: {currentBook.BookName}, {currentBook.AuthorName}, {currentBook.Availability}");
         if (isEditMode)
         {
-            var response = await Http.PutAsJsonAsync($"api/books/{currentBook.BookID}", currentBook);
+            HttpResponseMessage response = await Http.PutAsJsonAsync($"api/books/{currentBook.BookID}", currentBook);
             if (response.IsSuccessStatusCode)
             {
                 message = "Updated successfully.";
@@ -153,7 +200,7 @@
                 message = "Add failed.";
             }
         }
-    }
+    } *@
 
     private void CancelForm()
     {
@@ -161,6 +208,5 @@
         message = "".ToString();
     }
 
-    [Inject]
-    private IJSRuntime JS { get; set; }
+    
 }

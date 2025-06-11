@@ -1,11 +1,14 @@
 ﻿@inject NavigationManager Navigation
-
+@inject UserStateService User
 @inherits LayoutComponentBase
 
 <PageTitle>Online Medical Store</PageTitle>
 
 <div class="main-layout">
-  
+  @if(User.CurrentUser!=null)
+  {
+
+ 
       <nav class="nav-menu">
     <ul>
         <li><NavLink href="/home">Home</NavLink></li>
@@ -14,10 +17,11 @@
         <li><NavLink href="/bookhistory">History</NavLink></li>
         <li><NavLink href="/walletrecharge">WalletRecharge</NavLink></li>
         <li><a @onclick="Logout">Logout</a></li>
+        <li></li>
     </ul>
 </nav>
 
-    
+ }
 
     <div class="body">
         @Body

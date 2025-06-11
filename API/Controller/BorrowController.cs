@@ -53,6 +53,11 @@ namespace API.Controller
             };
 
             ApplicationDBContext.borrowList.Add(newBorrow);
+            Console.WriteLine(newBorrow.UserID);
+            foreach (var k in ApplicationDBContext.borrowList)
+            {
+                Console.WriteLine(k.BookID);
+            }
             book.Availability = Availability.Issued;
 
             return Ok(new { Message = $"Book Borrowed successfully. Borrow ID: {borrowID}" });

@@ -1,0 +1,27 @@
+@code
+{
+    [Parameter]
+    public string Message { get; set; }
+    [Parameter]
+    public bool Visible { get; set; }
+    [Parameter]
+    public EventCallback OnClose { get; set; }
+    [Parameter]
+    public EventCallback OnCancel { get; set; }
+    [Parameter]
+    public EventCallback OnConfirm { get; set; }
+
+    public async Task Close()
+    {
+        await OnClose.InvokeAsync();
+    }
+
+    public async Task Cancel()
+    {
+        await OnCancel.InvokeAsync();
+    }
+    public async Task Confirm()
+    {
+        await OnConfirm.InvokeAsync();
+    }
+}
