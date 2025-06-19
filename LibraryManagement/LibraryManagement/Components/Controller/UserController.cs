@@ -35,14 +35,18 @@ namespace LibraryManagement.Components.Controller
             return NotFound();
         }
         // add 
-        [HttpPost("adduser")]
+        
+        [HttpPost("newuser")]
         public IActionResult AddUser([FromBody] UserDetails userDetails)
         {
-            var existinguser = _userService.GetMailID(userDetails.MailID);
-            if (existinguser == null)
+            Console.WriteLine("Method calling");
+            var existinguser = _userService.GetMailID(userDetails.Email);
+            if (existinguser != null)
             {
+                Console.WriteLine("F");
                 return Conflict("Exist");
             }
+            Console.WriteLine("Su");
             _userService.AddUser(userDetails);
             return Ok();
         }

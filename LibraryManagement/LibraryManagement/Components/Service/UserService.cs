@@ -16,7 +16,7 @@ namespace LibraryManagement.Components.Service
         // get mailid
         public UserDetails GetMailID(string mailid)
         {
-            var mail = ApplicationDBContext.users.Find(u => u.MailID == mailid);
+            var mail = ApplicationDBContext.users.Find(u => u.Email == mailid);
             return mail;
         }
         // get userid
@@ -28,10 +28,12 @@ namespace LibraryManagement.Components.Service
         // add user
         public void AddUser(UserDetails userDetails)
         {
+            Console.WriteLine("call adduser method");
             int count = ApplicationDBContext.users.Count;
             if (count != 0)
             {
                 userDetails.UserID = ApplicationDBContext.users[ApplicationDBContext.users.Count - 1].UserID + 1;
+                Console.WriteLine(userDetails.UserID);
             }
             else
             {
@@ -39,6 +41,7 @@ namespace LibraryManagement.Components.Service
             }
             userDetails.Role = "User";
             ApplicationDBContext.users.Add(userDetails);
+            Console.WriteLine("SF");
         }
         // wallet recharge
         public bool WalletRecharge(int amount, int userid)

@@ -7,7 +7,7 @@ namespace LibraryManagement.Components.Models
 {
     public class LoginDetails
     {
-        public string MailID { get; set; }
+        public string Email { get; set; }
         public string Password { get; set; }
     }
 }

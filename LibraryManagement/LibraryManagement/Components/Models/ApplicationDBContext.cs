@@ -11,11 +11,12 @@ namespace LibraryManagement.Components.Models
         { new UserDetails
         {
             UserName = "Pavi",
-            Gender = Gender.Female,
+            Gender = "Female",
             Department = "Maths",
             MobileNumber = "1234567890",
-            MailID = "pavi@gmail.com",
+            Email = "pavi@gmail.com",
             WalletBalance = 1000,
+            Password="123",
             UserID = 1,
             Role="Admin"
         }

@@ -1,6 +1,75 @@
 @page "/"
+@using LibraryManagement.Components.Models
+@using LibraryManagement.Components.Service
+@using Microsoft.AspNetCore.Components.Authorization
+@inject UserService UserService
+@inject AuthenticationStateProvider authenticationState
+@inject NavigationManager navigationManager
+@inject IJSRuntime JSRuntime
+@rendermode InteractiveServer
+@inject HttpClient httpClient
+
+<EditForm Model="@SignUp" FormName="SignUp" OnValidSubmit="SubmitSignIn">
+  @* // b.	UserName
+        // c.	Gender
+        // d.	Department 
+        // e.	MobileNumber
+        // f.	MailID
+        // g.	WalletBalance *@
+  <InputText placeholder="Name" @bind-Value="SignUp.UserName"></InputText>
+  <InputText placeholder="MailID" @bind-Value="SignUp.Email"></InputText>
+  <InputText placeholder="Password" @bind-Value="SignUp.Password"></InputText>
+  <InputText placeholder="MobileNumber" @bind-Value="SignUp.MobileNumber"></InputText>
+  <InputNumber placeholder="WalletBalance" @bind-Value="SignUp.WalletBalance"></InputNumber>
+  <InputText placeholder="Department" @bind-Value="SignUp.Department"></InputText>
+  <InputText placeholder="gendert" @bind-Value="SignUp.Gender"></InputText>
+  <button type="submit">submit</button>
+</EditForm>
+
+<EditForm Model="@Login" FormName="Login" OnValidSubmit="SubmitLogin">
+  <InputText placeholder="Email" @bind-Value="Login.Email"></InputText>
+  <InputText placeholder="Password" @bind-Value="Login.Password"></InputText>
+  <button type="submit">submit</button>
+</EditForm>
 
 @code
 {
-    
+  public UserDetails SignUp = new();
+  public LoginDetails Login = new();
+  protected override void OnInitialized()
+  {
+    UserService.GetAllUser();
+  }
+  protected override async Task OnAfterRenderAsync(bool firstrender)
+  {
+    if (firstrender)
+    {
+      
+      var authState = await authenticationState.GetAuthenticationStateAsync();
+      if (authState.User.Identity.IsAuthenticated)
+      {
+        navigationManager.NavigateTo("/home", true);
+      }
+
+    }
+  }
+  public async Task SubmitLogin()
+  {
+    await JSRuntime.InvokeVoidAsync("loginUser", Login.Email, Login.Password);
+  }
+  public async Task SubmitSignIn()
+  {
+    var user = await httpClient.PostAsJsonAsync("api/user/newuser", SignUp);
+    Console.WriteLine(user);
+    if (user.IsSuccessStatusCode)
+    {
+      SignUp = new UserDetails();
+      Console.WriteLine("s");
+      StateHasChanged();
+    }
+    else
+    {
+      Console.WriteLine("F");
+    }
+  }
 }

@@ -17,10 +17,10 @@ namespace LibraryManagement.Components.Models
         // g.	WalletBalance
 
         public string UserName { get; set; }
-        public Gender Gender { get; set; }
+        public string Gender { get; set; }
         public string Department { get; set; }
         public string MobileNumber { get; set; }
-        public string MailID { get; set; }
+        public string Email { get; set; }
         public string Password { get; set; }
         public int WalletBalance { get; set; }
         public int UserID { get; set; }
