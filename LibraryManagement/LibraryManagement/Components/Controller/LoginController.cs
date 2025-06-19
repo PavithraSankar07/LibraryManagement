@@ -22,7 +22,7 @@ namespace LibraryManagement.Components.Controller
         public async Task<IActionResult> LoginUser([FromBody] LoginDetails newuser)
         {
             Console.WriteLine("method call api");
-             
+
             var user = _userService.GetMailID(newuser.Email);
             if (user != null && user.Password == newuser.Password)
             {
@@ -43,6 +43,12 @@ namespace LibraryManagement.Components.Controller
                 System.Console.WriteLine("fail");
             }
             return Unauthorized();
+        }
+        [HttpGet]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync("Cookies");
+            return Redirect("/");
         }
     }
 }

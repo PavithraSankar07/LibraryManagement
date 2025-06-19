@@ -1,30 +1,71 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@using Microsoft.AspNetCore.Components.Authorization
+
+
+<AuthorizeView>
+    <Authorized>
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">LibraryManagement</a>
     </div>
+    <div>
+        
+    </div>
 </div>
+    </Authorized>
+</AuthorizeView>
 
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
-
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
+<AuthorizeView Roles="Admin,User">
+    <Authorized Context="Outer">
+        <input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+        <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+            <nav class="flex-column">
+                <AuthorizeView Roles="Admin,User">
+                    <Authorized Context="Inner">
+                        <div class="nav-item px-3">
+                            <NavLink class="nav-link" href="home">
+                                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Home
+                            </NavLink>
+                        </div>
+                    </Authorized>
+                </AuthorizeView>
+                <AuthorizeView Roles="Admin">
+                    <Authorized Context="Inner">
+                        <div class="nav-item px-3">
+                            <NavLink class="nav-link" href="bookdetails">
+                                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> BookDetails
+                            </NavLink>
+                        </div>
+                    </Authorized>
+                </AuthorizeView>
+                <AuthorizeView Roles="Admin,User">
+                    <Authorized Context="Inner">
+                        <div class="nav-item px-3">
+                            <NavLink class="nav-link" href="borrowbook">
+                                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> BorrowBook
+                            </NavLink>
+                        </div>
+                    </Authorized>
+                </AuthorizeView>
+                <AuthorizeView Roles="Admin">
+                    <Authorized Context="Inner">
+                        <div class="nav-item px-3">
+                            <NavLink class="nav-link" href="borrowhistory">
+                                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> BorrowHistory
+                            </NavLink>
+                        </div>
+                    </Authorized>
+                </AuthorizeView>
+                <AuthorizeView Roles="Admin,User">
+                    <Authorized Context="Inner">
+                        <div class="nav-item px-3">
+                            <NavLink class="nav-link" href="walletrecharge">
+                                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Wallet Recharge
+                            </NavLink>
+                        </div>
+                    </Authorized>
+                </AuthorizeView>
+            </nav>
         </div>
+    </Authorized>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-            </NavLink>
-        </div>
-    </nav>
-</div>
-
+</AuthorizeView>
