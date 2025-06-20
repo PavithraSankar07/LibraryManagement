@@ -23,44 +23,16 @@ namespace LibraryManagement.Components.Models
 
         };
 
-        public static List<BookDetails> books = new()
+          public static List<BookDetails> books = new()
         {
-            new BookDetails
-            {
-                BookID=1,
-                BookName="C#",
-                AuthorName="Pavi",
-                Availability=Availability.Available
-            },
-            new BookDetails
-        {
-            BookID=2,
-                BookName="C#",
-                AuthorName="Pavi",
-                Availability=Availability.Damaged
-        },
-         new BookDetails
-        {
-            BookID=3,
-                BookName="C#",
-                AuthorName="Pavi",
-                Availability=Availability.Issued
-        },
-         new BookDetails
-        {
-            BookID=4,
-                BookName="C#",
-                AuthorName="Pavi",
-                Availability=Availability.Available
-        },
-        new BookDetails
-        {
-            BookID=5,
-            BookName="html",
-            AuthorName="Ragu",
-            Availability=Availability.Damaged
-        }
-
+            new BookDetails(){BookID = 1, BookName = "HTML", AuthorName = "Web", Availability = "Available"},
+            new BookDetails(){BookID = 2, BookName = "CSS", AuthorName = "Web", Availability = "Damaged"},
+            new BookDetails(){BookID = 3, BookName = "JS", AuthorName = "Web", Availability = "Issued"},
+            new BookDetails(){BookID = 4, BookName = "TS", AuthorName = "Web", Availability = "Issued"},
+            new BookDetails(){BookID = 5, BookName = "HTML1", AuthorName = "Web", Availability = "Available"},
+            new BookDetails(){BookID = 6, BookName = "HTML2", AuthorName = "Web", Availability = "Available"},
+            new BookDetails(){BookID = 7, BookName = "HTML3", AuthorName = "Web", Availability = "Available"},
+            new BookDetails(){BookID = 8, BookName = "HTML4", AuthorName = "Web", Availability = "Damaged"}
         };
 
 

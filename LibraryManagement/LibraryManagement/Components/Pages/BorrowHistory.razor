@@ -1,3 +1,41 @@
 @page "/borrowhistory"
+@using LibraryManagement.Components.Models
+@rendermode InteractiveServer
 @attribute [Authorize(Roles ="Admin,User")]
 <p>BH</p>
+  @* //         •	BorrowID (Auto Increment – LB2000)
+        // •	BookID 
+        // •	UserID
+        // •	BorrowedDate – (Current Date)
+        // •	BookingStatus – (Enum - Default, Borrowed, Returned)
+        // •	PaidFineAmount *@
+<table>
+    <thead>
+    <tr>
+        <th>Serial number</th>
+        <th>BookID</th>
+        <th>UserID</th>
+        <th>BorrowedDate</th>
+        <th>Booking Status</th>
+        <th>Fine</th>
+    </tr>
+    </thead>
+    <body>
+        @foreach(var borrow in borrows)
+        {
+           <tr>
+            <th>1</th>
+            <th>@borrow.BookID</th>
+            <th>@borrow.UserID</th>
+            <th>@borrow.BorrowedDate</th>
+            <th>@borrow.BookingStatus</th>
+            <th>@borrow.PaidFineAmount</th>
+           </tr>
+        }
+    </body>
+</table>
+@code
+{
+    List<BorrowDetails> borrows=new();
+    BorrowDetails borrowDetails=new BorrowDetails();  
+}
