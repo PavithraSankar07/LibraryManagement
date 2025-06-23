@@ -12,9 +12,9 @@ builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 builder.Services.AddHttpClient();
 builder.Services.AddScoped(hc => new HttpClient { BaseAddress = new Uri("http://localhost:5298") });
-builder.Services.AddScoped<UserService>();
+builder.Services.AddSingleton<UserService>();
 builder.Services.AddSingleton<BookDetailsService>();
-builder.Services.AddScoped<BorrowBookService>();
+builder.Services.AddSingleton<BorrowDetailsService>();
 builder.Services.AddAuthentication("Cookies")
 .AddCookie("Cookies", options =>
 {

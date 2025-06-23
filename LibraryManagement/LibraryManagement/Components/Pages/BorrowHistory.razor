@@ -1,9 +1,15 @@
 @page "/borrowhistory"
 @using LibraryManagement.Components.Models
+@using LibraryManagement.Components.Service
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
 @rendermode InteractiveServer
-@attribute [Authorize(Roles ="Admin,User")]
+@inject AuthenticationStateProvider authenticationState
+@inject HttpClient httpClient
+@inject BorrowDetailsService borrowDetailsServices
+@attribute [Authorize(Roles = "Admin,User")]
 <p>BH</p>
-  @* //         •	BorrowID (Auto Increment – LB2000)
+@* //         •	BorrowID (Auto Increment – LB2000)
         // •	BookID 
         // •	UserID
         // •	BorrowedDate – (Current Date)
@@ -11,31 +17,85 @@
         // •	PaidFineAmount *@
 <table>
     <thead>
-    <tr>
-        <th>Serial number</th>
-        <th>BookID</th>
-        <th>UserID</th>
-        <th>BorrowedDate</th>
-        <th>Booking Status</th>
-        <th>Fine</th>
-    </tr>
+        <tr>
+            <th>Serial number</th>
+            <th>BookID</th>
+            <th>UserID</th>
+            <th>BorrowedDate</th>
+            <th>Booking Status</th>
+            <th>Fine</th>
+            <th>Action</th>
+        </tr>
     </thead>
-    <body>
-        @foreach(var borrow in borrows)
+
+    <tbody>
+        @foreach (var borrow in borrows)
         {
-           <tr>
-            <th>1</th>
-            <th>@borrow.BookID</th>
-            <th>@borrow.UserID</th>
-            <th>@borrow.BorrowedDate</th>
-            <th>@borrow.BookingStatus</th>
-            <th>@borrow.PaidFineAmount</th>
-           </tr>
+            <tr>
+                <td>1</td>
+                <td>@borrow.BookID</td>
+                <td>@borrow.UserID</td>
+                <td>@borrow.BorrowedDate</td>
+                <td>@borrow.BookingStatus</td>
+                <td>@borrow.PaidFineAmount</td>
+                <td>
+                      @if (borrow.BookingStatus == BookingStatus.Borrowed)
+                    {
+                        <button @onclick="() => Cancel(borrow.BorrowID)">Cancel</button>
+                    }
+                    else
+                    {
+                        <span>Returned</span>
+                    }
+                </td>
+            </tr>
         }
-    </body>
+    </tbody>
 </table>
+
 @code
 {
-    List<BorrowDetails> borrows=new();
-    BorrowDetails borrowDetails=new BorrowDetails();  
+    string message="";
+    List<BorrowDetails> borrows = new();
+     
+    BorrowDetails borrowDetails = new BorrowDetails();
+   
+    protected override async Task OnInitializedAsync()
+    {
+        borrows = borrowDetailsServices.GetAllBooks();
+         Console.WriteLine(borrows.Count);
+    }
+
+    private async void Cancel(int borrowid)
+    {
+        Console.WriteLine("Success111");
+        var authState = await authenticationState.GetAuthenticationStateAsync();
+        var mailclaim = authState.User.FindFirst(ClaimTypes.Email);
+        var mailid=mailclaim.Value;
+        var response = await httpClient.PutAsync($"api/borrow/cancel/{borrowid}",null);
+        if(response.IsSuccessStatusCode)
+        {
+            var result = await response.Content.ReadAsStringAsync();
+            int number = int.Parse(result);
+            switch(number)
+            {
+                case 0:
+                {
+                     Console.WriteLine("Success");
+                    break;
+                }
+                case 1:
+                {
+                     Console.WriteLine("issue");
+                     break;
+                }
+
+            }
+        }
+        else
+        {
+            Console.WriteLine("fail");
+        }
+    }
+
 }

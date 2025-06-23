@@ -1,3 +1,135 @@
 @page "/borrowbook"
-@attribute [Authorize(Roles ="Admin,User")]
+@using LibraryManagement.Components.Models
+@using LibraryManagement.Components.Service
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
 @rendermode InteractiveServer
+
+@inject BookDetailsService bookDetailsServices
+@inject UserService userServices
+@inject BorrowDetailsService borrowDetailsServices
+@inject AuthenticationStateProvider authenticationState
+@inject HttpClient httpClient
+@attribute [Authorize(Roles = "Admin,User")]
+
+<table>
+    <thead>
+        <tr>
+            <th>Book Name</th>
+            <th>Author Name</th>
+            <th>Availability Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (BookDetails book in books)
+        {
+            <tr>
+                <td>@book.BookName</td>
+                <td>@book.AuthorName</td>
+                <td>@book.Availability</td>
+                <td>
+                    <button @onclick="() => BorrowBooks(book.BookID)">Borrow</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@code
+{
+
+    static List<BookDetails> books = new List<BookDetails>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        books= bookDetailsServices.GetBooks();
+          
+        @* httpClient.GetFromJsonAsync<List<BookDetails>>("api/book/getbooks"); *@
+    }
+
+    private async void BorrowBooks(int bookid)
+    {
+        var authState = await authenticationState.GetAuthenticationStateAsync();
+        var mailclaim = authState.User.FindFirst(ClaimTypes.Email);
+        var mailid = mailclaim.Value;
+        Console.WriteLine(mailid);
+        var response = await httpClient.PostAsync($"api/borrow/borrowed/{bookid}/{mailid}", null);
+        if (response.IsSuccessStatusCode)
+        {
+            var result = await response.Content.ReadAsStringAsync();
+            int number = int.Parse(result);
+
+            switch (number)
+            {
+                case 0:
+                    {
+                       Console.WriteLine("You already borrrow book 3");
+                   
+                        break;
+                    }
+                case 1:
+                    {
+                         Console.WriteLine("Success");
+                       
+                        break;
+                    }
+                case 2:
+                    {
+                         Console.WriteLine("Book not available");
+                       
+                        break;
+                    }
+                    case 3:
+                    {
+                         Console.WriteLine("user");
+                       
+                        break;
+                    }
+                    case 4:
+                    {
+                         Console.WriteLine("book");
+                       
+                        break;
+                    }
+            }
+        }
+        else
+        {
+            var message = await response.Content.ReadAsStringAsync();
+            Console.WriteLine(message);
+            Console.WriteLine("bye");
+            Console.WriteLine(message);
+        }
+    }
+    @* private async void BorrowBook(int bookid)
+    {
+        BookDetails currentbook = bookDetailsServices.GetbookbyID(bookid);
+        if (currentbook != null)
+        {
+            if (currentbook.Availability == "Available")
+            {
+                var authState = await authenticationState.GetAuthenticationStateAsync();
+                var email = authState.User.FindFirst(ClaimTypes.Email);
+                var currentUser = userServices.GetMailID(email.Value);
+                if (borrowDetailsServices.AddBook(new BookDetails)
+                {
+                     BorrowID = 0,
+                        BookID = currentBook.BookID,
+                        UserID = currentUser.UserID,
+                        BorrowedDate = DateTime.Now,
+                        BorrowStatus = BorrowStatus.Borrowed,
+                        PaidFineAmount = 0
+                });
+                currentBook.BookAvailability = BookAvailability.Unavailable;
+            }
+            else
+            {
+
+            }
+        }
+        else
+        {
+
+        }
+    } *@
+}

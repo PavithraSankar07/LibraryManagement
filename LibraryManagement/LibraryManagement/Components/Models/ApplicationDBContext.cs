@@ -19,6 +19,18 @@ namespace LibraryManagement.Components.Models
             Password="123",
             UserID = 1,
             Role="Admin"
+        },
+        new UserDetails
+        {
+            UserName = "arun",
+            Gender = "male",
+            Department = "Maths",
+            MobileNumber = "1234567890",
+            Email = "arun@gmail.com",
+            WalletBalance = 1000,
+            Password="123",
+            UserID = 1,
+            Role="User"
         }
 
         };
