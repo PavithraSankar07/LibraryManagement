@@ -16,7 +16,7 @@
         // •	BorrowedDate – (Current Date)
         // •	BookingStatus – (Enum - Default, Borrowed, Returned)
         // •	PaidFineAmount *@
-<table>
+<table class="book-table">
     <thead>
         <tr>
             <th>Serial number</th>
@@ -46,7 +46,7 @@
                     }
                     else
                     {
-                        <span>Returned</span>
+                    <button disabled=@Isdisable>Return</button>
                     }
                 </td>
             </tr>
@@ -66,7 +66,7 @@
         borrows = borrowDetailsServices.GetAllBooks();
          Console.WriteLine(borrows.Count);
     }
-
+bool Isdisable=true;
     private async void Cancel(int borrowid)
     {
         Console.WriteLine("Success111");
@@ -84,8 +84,10 @@
             int number = await response.Content.ReadFromJsonAsync<int>();
             switch(number)
             {
+
                 case 0:
                 {
+                    Isdisable=true;
                      Console.WriteLine("Success");
                     break;
                 }

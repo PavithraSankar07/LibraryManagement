@@ -49,3 +49,42 @@ h1:focus {
 .darker-border-checkbox.form-check-input {
     border-color: #929292;
 }
+/* --------------------------------------------------------------- */
+.book-table
+{
+    border-collapse: collapse;
+    border: 2px solid black;
+     margin: 70px 6%;
+     width:90% ;
+}
+.book-table th,
+.book-table td
+{
+    border: 2px solid black;
+    padding: 10px;
+    text-align: center;
+}
+.book-table th
+{
+    background-color: blueviolet;
+    color: white;
+}
+.addbutton {
+    background-color: #8b008b;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 45%;
+    font-size: 16px;
+    color: white;
+}
+.book-table button:last-child {
+    background-color: #8b008b;
+    border: none;
+}
+.book-table button:first-child
+{
+    background-color: blueviolet;
+    border: none;
+}

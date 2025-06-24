@@ -6,20 +6,21 @@
 @rendermode InteractiveServer
 @inject IHttpContextAccessor HttpContextAccessor
 @inject BookDetailsService BookDetailsService
-<button @onclick="Addsubmit">add</button>
+<button @onclick="Addsubmit" class="addbutton">add</button>
 
 <h1>BD</h1>
 @* public int BookID { get; set; }
         public string BookName { get; set; }
         public string AuthorName { get; set; }
         public Availability Availability { get; set; } *@
-<table>
+<table class="book-table">
     <thead>
         <tr>
             <th>Serial number</th>
             <th>BookName</th>
             <th>AuthorName</th>
             <th>Availability</th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
