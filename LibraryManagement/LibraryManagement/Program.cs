@@ -27,6 +27,7 @@ builder.Services.AddEndpointsApiExplorer(); // For minimal APIs/endpoint discove
 builder.Services.AddSwaggerGen(); 
 builder.Services.AddAuthorization();
 builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddHttpContextAccessor();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -1,4 +1,71 @@
 @page "/walletrecharge"
-@attribute [Authorize(Roles ="Admin,User")]
-
+@using LibraryManagement.Components.Models
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+@attribute [Authorize(Roles = "Admin,User")]
+@inject IHttpContextAccessor HttpContextAccessor
+@inject AuthenticationStateProvider AuthenticationState
+@inject HttpClient httpClient
 <p>WR</p>
+
+<h2>@WalletBalance</h2>
+<p>Enter the amount</p>
+<InputNumber @bind-Value="@amount"></InputNumber>
+<button @onclick="Balance">Recharge</button>
+@code
+{
+  int amount;
+  int WalletBalance;
+
+  protected override async Task OnInitializedAsync()
+  {
+    CurrentBalance();
+  }
+  public async Task Balance()
+  {
+    Console.WriteLine("amount1" + WalletBalance);
+    var authState = await AuthenticationState.GetAuthenticationStateAsync();
+    var email = authState.User.FindFirst(ClaimTypes.Email);
+    var cookie = HttpContextAccessor.HttpContext.Request.Headers["Cookie"].ToString();
+    var request = new HttpRequestMessage(HttpMethod.Put, $"api/user/deposit/{email.Value}/{amount}")
+    {
+      Content = null
+    };
+    request.Headers.Add("Cookie", cookie);
+    var response = await httpClient.SendAsync(request);
+    if (response.IsSuccessStatusCode)
+    {
+      await CurrentBalance();
+      StateHasChanged();
+    }
+  }
+  public async Task CurrentBalance()
+  {
+    Console.WriteLine("amount2" + WalletBalance);
+    var authState = await AuthenticationState.GetAuthenticationStateAsync();
+    var emailClaim = authState.User.FindFirst(ClaimTypes.Email);
+    var cookieHeader = HttpContextAccessor.HttpContext?.Request.Headers["Cookie"].ToString();
+    var request = new HttpRequestMessage(HttpMethod.Get, $"api/user/getmailid/{emailClaim.Value}");
+    request.Headers.Add("Cookie", cookieHeader);
+    var response = await httpClient.SendAsync(request);
+    if (response.IsSuccessStatusCode)
+    {
+      UserDetails user = await response.Content.ReadFromJsonAsync<UserDetails>();
+      if (user.WalletBalance != 0)
+      {
+        WalletBalance = user.WalletBalance;
+        Console.WriteLine("amount3" + WalletBalance);
+      }
+      else
+      {
+           Console.WriteLine("amount4"+WalletBalance);
+        WalletBalance = 0;
+      }
+      StateHasChanged();
+    }
+    else
+    {
+      Console.WriteLine("failed............");
+    }
+  }
+}

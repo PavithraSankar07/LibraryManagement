@@ -1,0 +1,161 @@
+@page "/bookdetail"
+@using LibraryManagement.Components.Models
+@using LibraryManagement.Components.Service
+@attribute [Authorize(Roles = "Admin,User")]
+@inject HttpClient httpClient
+@rendermode InteractiveServer
+@inject IHttpContextAccessor HttpContextAccessor
+@inject BookDetailsService BookDetailsService
+<button @onclick="Addsubmit">add</button>
+
+<h1>BD</h1>
+@* public int BookID { get; set; }
+        public string BookName { get; set; }
+        public string AuthorName { get; set; }
+        public Availability Availability { get; set; } *@
+<table>
+    <thead>
+        <tr>
+            <th>Serial number</th>
+            <th>BookName</th>
+            <th>AuthorName</th>
+            <th>Availability</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (BookDetails book in bookDetails1)
+        {
+            <tr>
+                <td>1</td>
+                <td>@book.BookName</td>
+                <td>@book.AuthorName</td>
+                <td>@book.Availability</td>
+                <td>
+                    <button @onclick="() => Edit(book)">Edit</button>
+                    <button @onclick="() => Delete(book)">Delete</button>
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+@if (formshow == true)
+{
+    <EditForm Model="@books" FormName="BookForm" OnValidSubmit="Submit">
+        <InputText placeholder="BookName" @bind-Value="books.BookName"></InputText>
+        <InputText placeholder="AuthorName" @bind-Value="books.AuthorName"></InputText>
+        <InputText placeholder="Availability" @bind-Value="books.Availability"></InputText>
+        <button type="submit">Submit</button>
+    </EditForm>
+}
+
+@code
+{
+    void Test()
+    {
+        Console.WriteLine("LLL");
+    }
+    bool edit = false;
+    bool formshow = false;
+    List<BookDetails> bookDetails1 = new();
+    BookDetails books = new BookDetails();
+    protected override async Task OnInitializedAsync()
+    {
+        bookDetails1= BookDetailsService.GetBooks();
+        httpClient.GetFromJsonAsync<List<BookDetails>>("api/book/getbooks");
+    }
+
+    public async Task Delete(BookDetails book1)
+    {
+         var cookie = HttpContextAccessor.HttpContext.Request.Headers["Cookie"].ToString();
+         var reques=new HttpRequestMessage(HttpMethod.Delete,$"api/book/bookdelete/{book1.BookID}");
+         reques.Headers.Add("Cookie",cookie);
+         var response = await httpClient.SendAsync(reques);
+         if(response.IsSuccessStatusCode)
+         {
+           Console.WriteLine("delt suc");
+         }
+         else
+         {
+            Console.WriteLine("dele failed");
+         }
+    }
+  
+    @* Edit *@
+
+    public async Task Edit(BookDetails book)
+    {
+        Console.WriteLine("Edit call");
+        formshow = true;
+        edit = true;
+        books = new BookDetails()
+        {
+            BookID = book.BookID,
+            AuthorName = book.AuthorName,
+            Availability = book.Availability,
+            BookName = book.BookName
+        };
+        StateHasChanged();
+    }
+    @* Submit the EditForm *@
+
+    public async void Submit()
+    {
+        var header=HttpContextAccessor.HttpContext.Request.Headers["Cookie"].ToString();
+        if (edit)
+        {
+          var request=new HttpRequestMessage(HttpMethod.Put,"api/book/editbook")
+          {
+            Content=JsonContent.Create(books)
+          };
+          request.Headers.Add("Cookie",header);
+          var response = await httpClient.SendAsync(request);
+            @* var response = await httpClient.PutAsJsonAsync("api/book/editbook", books); *@
+            Console.WriteLine(response);
+            if (response.IsSuccessStatusCode)
+            {
+                books = new BookDetails();
+                @* bookDetails1 = await httpClient.GetFromJsonAsync<List<BookDetails>>("api/book/getbooks"); *@
+                formshow = false;
+            }
+            else
+            {
+                Console.WriteLine("edit failed");
+            }
+        }
+        else
+        {
+            var request = new HttpRequestMessage(HttpMethod.Post,"api/book/bookadd")
+            {
+                Content=JsonContent.Create(books)
+            };
+            request.Headers.Add("Cookie",header);
+           var response=await httpClient.SendAsync(request);
+            @* var response = await httpClient.PostAsJsonAsync("api/book/bookadd", books); *@
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine("add success");
+            }
+            else
+            {
+                Console.WriteLine("addfailed");
+            }
+            books = new BookDetails();
+            
+        }
+        bookDetails1 = await httpClient.GetFromJsonAsync<List<BookDetails>>("api/book/getbooks");
+    }
+
+    @* Add *@
+    public async void Addsubmit()
+    {
+
+        formshow = true;
+        edit = false;
+ 
+
+
+
+    }
+}

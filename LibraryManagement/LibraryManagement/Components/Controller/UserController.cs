@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using LibraryManagement.Components.Models;
 using LibraryManagement.Components.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryManagement.Components.Controller
@@ -19,12 +20,14 @@ namespace LibraryManagement.Components.Controller
         }
         // get the user
         [HttpGet("getuser")]
+        [Authorize(Roles ="Admin,User")]
         public IActionResult GetUser()
         {
             return Ok(_userService.GetAllUser());
         }
         // getby mailid
         [HttpGet("getmailid")]
+        [Authorize(Roles ="Admin,User")]
         public IActionResult GetEmail(string mailid)
         {
             var user = _userService.GetMailID(mailid);
@@ -35,8 +38,9 @@ namespace LibraryManagement.Components.Controller
             return NotFound();
         }
         // add 
-        
+
         [HttpPost("newuser")]
+        [Authorize(Roles ="Admin")]
         public IActionResult AddUser([FromBody] UserDetails userDetails)
         {
             Console.WriteLine("Method calling");
@@ -51,5 +55,18 @@ namespace LibraryManagement.Components.Controller
             return Ok();
         }
         // wallet
+           [HttpPut("deposit/{mailID}/{amount}")]
+        [Authorize(Roles = "Admin,User")]
+        public IActionResult RechargeWalletBalance(string mailID, int amount)
+        {
+            var user = _userService.GetMailID(mailID);
+            if (user != null)
+            {
+                user.WalletBalance += amount;
+                return Ok();
+            }
+            Console.WriteLine(user.WalletBalance);
+            return NotFound();
+        }
     }
 }
